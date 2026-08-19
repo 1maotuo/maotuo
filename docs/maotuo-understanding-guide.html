@@ -1,0 +1,531 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Maotuo 中文理解与面试逐字稿</title>
+  <style>
+    :root {
+      --bg: #f5f7fb;
+      --paper: #ffffff;
+      --ink: #182230;
+      --muted: #667085;
+      --line: #d9e1ee;
+      --blue: #2563eb;
+      --blue-soft: #eaf2ff;
+      --green: #087443;
+      --green-soft: #e8f7ef;
+      --amber: #a15c00;
+      --amber-soft: #fff4df;
+      --red: #b42318;
+      --red-soft: #fff0ef;
+      --purple: #6941c6;
+      --purple-soft: #f2edff;
+      --shadow: 0 10px 32px rgba(16, 24, 40, .08);
+    }
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body {
+      margin: 0;
+      color: var(--ink);
+      background: var(--bg);
+      font-family: "Microsoft YaHei", "PingFang SC", Arial, sans-serif;
+      line-height: 1.75;
+    }
+    .page { display: grid; grid-template-columns: 260px minmax(0, 1fr); min-height: 100vh; }
+    .side {
+      position: sticky; top: 0; height: 100vh; overflow: auto;
+      padding: 28px 18px; background: #111827; color: #dbe5f5;
+    }
+    .brand { font-size: 23px; font-weight: 800; color: #fff; letter-spacing: .03em; }
+    .brand small { display: block; color: #9eb3d2; font-size: 12px; font-weight: 400; margin-top: 2px; }
+    .side nav { margin-top: 26px; }
+    .side a { display: block; color: #c9d5e8; text-decoration: none; padding: 7px 10px; border-radius: 8px; font-size: 13px; }
+    .side a:hover { color: #fff; background: rgba(255,255,255,.1); }
+    .main { width: min(1240px, 100%); margin: 0 auto; padding: 42px 42px 80px; }
+    .hero {
+      padding: 42px 46px; border: 1px solid #cfe0ff; border-radius: 22px;
+      background: linear-gradient(135deg, #e9f2ff 0%, #fff 55%, #f0ecff 100%);
+      box-shadow: var(--shadow);
+    }
+    h1 { margin: 0 0 12px; font-size: clamp(30px, 4vw, 48px); line-height: 1.2; letter-spacing: -.03em; }
+    h2 { margin: 54px 0 15px; font-size: 28px; line-height: 1.3; }
+    h3 { margin: 28px 0 8px; font-size: 20px; line-height: 1.4; }
+    h4 { margin: 18px 0 6px; font-size: 16px; }
+    p { margin: 10px 0; }
+    .lead { font-size: 19px; color: #344054; max-width: 900px; }
+    .notice { padding: 14px 17px; margin: 18px 0; border-left: 4px solid var(--blue); background: var(--blue-soft); border-radius: 8px; }
+    .note-green { border-left-color: var(--green); background: var(--green-soft); }
+    .note-amber { border-left-color: #f79009; background: var(--amber-soft); }
+    .note-red { border-left-color: var(--red); background: var(--red-soft); }
+    .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 16px; }
+    .card { background: var(--paper); border: 1px solid var(--line); border-radius: 15px; padding: 20px; box-shadow: 0 4px 16px rgba(16,24,40,.04); }
+    .card h3 { margin-top: 0; }
+    .tag { display: inline-block; padding: 2px 9px; border-radius: 99px; font-size: 12px; font-weight: 700; margin: 2px 4px 2px 0; }
+    .tag-blue { color: #175cd3; background: var(--blue-soft); }
+    .tag-green { color: var(--green); background: var(--green-soft); }
+    .tag-purple { color: var(--purple); background: var(--purple-soft); }
+    .tag-amber { color: var(--amber); background: var(--amber-soft); }
+    .tag-red { color: var(--red); background: var(--red-soft); }
+    .quote {
+      margin: 14px 0; padding: 18px 20px; border: 1px solid #cfd8e8; border-radius: 12px;
+      background: #fbfcfe; font-size: 16px;
+    }
+    .quote::before { content: "“"; color: var(--blue); font-size: 34px; line-height: 0; vertical-align: -10px; margin-right: 5px; }
+    .figure { margin: 22px 0; padding: 18px; background: var(--paper); border: 1px solid var(--line); border-radius: 16px; overflow-x: auto; box-shadow: 0 4px 16px rgba(16,24,40,.04); }
+    .figure figcaption { color: var(--muted); font-size: 13px; margin-top: 8px; text-align: center; }
+    svg { display: block; width: 100%; min-width: 760px; height: auto; }
+    svg text { font-family: "Microsoft YaHei", "PingFang SC", Arial, sans-serif; }
+    .svg-title { font-size: 18px; font-weight: 700; fill: #182230; }
+    .svg-label { font-size: 14px; font-weight: 700; fill: #182230; }
+    .svg-small { font-size: 12px; fill: #475467; }
+    .svg-box { fill: #fff; stroke: #b8c6d9; stroke-width: 1.5; }
+    .svg-blue { fill: #eaf2ff; stroke: #75a7ff; }
+    .svg-green { fill: #e8f7ef; stroke: #67b88b; }
+    .svg-amber { fill: #fff4df; stroke: #e6a23c; }
+    .svg-purple { fill: #f2edff; stroke: #a98be5; }
+    .svg-red { fill: #fff0ef; stroke: #e58d88; }
+    .svg-arrow { stroke: #60708a; stroke-width: 2; fill: none; marker-end: url(#arrow); }
+    .svg-dashed { stroke-dasharray: 6 5; }
+    table { width: 100%; border-collapse: collapse; background: var(--paper); border-radius: 12px; overflow: hidden; border: 1px solid var(--line); }
+    th, td { padding: 12px 14px; border-bottom: 1px solid var(--line); text-align: left; vertical-align: top; }
+    th { background: #eef3fa; font-size: 14px; }
+    td { font-size: 14px; }
+    tr:last-child td { border-bottom: 0; }
+    code { padding: 2px 5px; border-radius: 5px; color: #344054; background: #eef2f6; font-family: Consolas, "Courier New", monospace; font-size: .92em; }
+    pre { overflow-x: auto; padding: 16px; border-radius: 10px; color: #dbeafe; background: #172033; font: 13px/1.6 Consolas, "Courier New", monospace; }
+    .flow { display: flex; flex-wrap: wrap; align-items: center; justify-content: center; gap: 8px; margin: 18px 0; }
+    .flow .item { padding: 9px 14px; border-radius: 10px; border: 1px solid var(--line); background: #fff; font-size: 14px; font-weight: 700; }
+    .flow .arrow { color: var(--blue); font-size: 22px; }
+    .step { display: grid; grid-template-columns: 42px minmax(0, 1fr); gap: 12px; margin: 16px 0; }
+    .step-no { display: grid; place-items: center; width: 34px; height: 34px; border-radius: 50%; color: #fff; background: var(--blue); font-weight: 800; }
+    .step-body { padding: 12px 16px; border: 1px solid var(--line); border-radius: 10px; background: #fff; }
+    .step-body strong { display: block; margin-bottom: 3px; }
+    details { margin: 10px 0; border: 1px solid var(--line); border-radius: 10px; background: #fff; }
+    summary { cursor: pointer; padding: 12px 15px; font-weight: 700; }
+    details > div { padding: 0 15px 14px; }
+    .metric { text-align: center; padding: 19px 12px; border-radius: 12px; background: #fff; border: 1px solid var(--line); }
+    .metric .num { display: block; color: var(--blue); font-size: 29px; font-weight: 800; line-height: 1.2; }
+    .metric .label { color: var(--muted); font-size: 13px; }
+    .footer { margin-top: 58px; color: var(--muted); font-size: 13px; text-align: center; }
+    @media (max-width: 850px) {
+      .page { display: block; }
+      .side { position: static; height: auto; }
+      .side nav { display: grid; grid-template-columns: repeat(2, minmax(0,1fr)); }
+      .main { padding: 22px 15px 55px; }
+      .hero { padding: 27px 22px; }
+    }
+  </style>
+</head>
+<body>
+  <div class="page">
+    <aside class="side">
+      <div class="brand">Maotuo<span style="color:#70a5ff">.</span><small>从 Pico 到安全可审计的 Coding Agent Runtime</small></div>
+      <nav>
+        <a href="#start">0. 使用方法</a>
+        <a href="#one-sentence">1. 一句话理解</a>
+        <a href="#difference">2. Pico→Maotuo</a>
+        <a href="#architecture">3. 总体架构</a>
+        <a href="#runtime-loop">4. 运行时主循环</a>
+        <a href="#tool-safety">5. 工具安全</a>
+        <a href="#evidence">6. 证据链</a>
+        <a href="#context">7. 上下文治理</a>
+        <a href="#role-skill">8. Role/Skill</a>
+        <a href="#evolution">9. 受控自进化</a>
+        <a href="#artifacts">10. 运行工件</a>
+        <a href="#modules">11. 模块地图</a>
+        <a href="#script">12. 面试逐字稿</a>
+        <a href="#metrics">13. 当前数据</a>
+        <a href="#reading">14. 阅读路线</a>
+      </nav>
+    </aside>
+
+    <main class="main">
+      <header class="hero" id="start">
+        <span class="tag tag-blue">中文学习稿</span>
+        <span class="tag tag-purple">逐字稿</span>
+        <span class="tag tag-green">架构图内嵌</span>
+        <h1>Maotuo 整体理解与讲解稿</h1>
+        <p class="lead">这份文档的目标不是让你背代码，而是帮助你把已经熟悉的 Pico，映射成一个更容易解释的 Maotuo：Pico 负责让模型完成任务，Maotuo 负责让模型在安全、可追踪、可恢复的边界内完成任务。</p>
+        <div class="notice note-green"><strong>最重要的一句话：</strong>Maotuo 不是把 Pico 推倒重写，而是在 Pico 的 Agent Loop 外面增加了一层 Runtime 控制面，把“工具权限、文件证据、上下文预算、发布门禁、失败复盘和受控进化”统一纳入运行时管理。</div>
+      </header>
+
+      <section id="one-sentence">
+        <h2>1. 先用一句话理解 Maotuo</h2>
+        <div class="grid">
+          <article class="card"><h3>Pico 是什么</h3><p>可以把 Pico 理解为一个轻量的模型工具循环：</p><div class="flow"><span class="item">用户问题</span><span class="arrow">→</span><span class="item">模型思考</span><span class="arrow">→</span><span class="item">调用工具</span><span class="arrow">→</span><span class="item">继续回答</span></div><p>重点是“模型能不能把任务做完”。</p></article>
+          <article class="card"><h3>Maotuo 增加了什么</h3><p>Maotuo 仍然保留这个循环，但在每一个关键边界加上治理：</p><p><span class="tag tag-blue">谁能调用工具</span><span class="tag tag-green">读到的文件是否仍然有效</span><span class="tag tag-amber">能否发布最终答案</span><span class="tag tag-purple">失败经验能否受控复用</span></p><p>重点变成“任务做完，而且过程可信、结果可审计”。</p></article>
+        </div>
+        <div class="quote">如果面试官只给我十秒钟，我会说：Maotuo 是基于 Pico 增量实现的轻量 Coding Agent Runtime。它不让模型直接拥有系统权限，而是让模型只提出计划和工具调用，再由 Runtime 完成权限校验、工具执行、证据校验和最终发布。</div>
+      </section>
+
+      <section id="difference">
+        <h2>2. Pico 到 Maotuo：不要把它理解成换了一个项目</h2>
+        <p>你已经了解 Pico，所以最有效的学习方式是看“原来的一步，现在由谁负责”。</p>
+        <table>
+          <thead><tr><th>原来 Pico 关注的事情</th><th>Maotuo 的增量</th><th>解决的真实问题</th></tr></thead>
+          <tbody>
+            <tr><td>模型调用与工具循环</td><td><code>AgentLoop</code> + <code>Maotuo.ask()</code> 统一管理运行</td><td>多轮任务有统一入口，能够记录、恢复和复盘。</td></tr>
+            <tr><td>模型可以提出工具调用</td><td><code>ToolExecutor</code> 和 Runtime 总闸口做白名单、参数、路径、审批校验</td><td>模型的输出不等于系统的执行权限。</td></tr>
+            <tr><td>工具读写文件</td><td><code>EvidenceStore</code> 记录 SHA256，<code>ReleaseGate</code> 发布前检查 stale</td><td>文件被外部修改后，不继续基于旧证据给出结论。</td></tr>
+            <tr><td>Prompt 逐渐变长</td><td><code>ContextManager</code> 做分层组装、裁剪和高价值上下文保护</td><td>减少无效历史，同时保留当前请求和安全约束。</td></tr>
+            <tr><td>角色差异主要靠提示词</td><td><code>RoleSkillManager</code> 同时约束工具白名单并注入领域知识</td><td>只读 Reviewer 从配置层就拿不到写工具。</td></tr>
+            <tr><td>失败后人工查看日志</td><td>Trace、Audit、Report、Checkpoint 和 ReplayCase 形成失败闭环</td><td>失败可以定位、恢复、回放，安全事件可审计。</td></tr>
+            <tr><td>提示词改进容易直接上线</td><td>候选自动评测，人工审批，评测失败关闭</td><td>自进化只改 Prompt 策略，不改工具权限和安全规则。</td></tr>
+          </tbody>
+        </table>
+        <div class="notice note-amber"><strong>学习重点：</strong>Maotuo 的“核心逻辑”仍然是 Pico 的模型—工具循环；新增逻辑主要集中在入口、边界和持久化层。这样既保持轻量，也让安全能力能联动起来。</div>
+      </section>
+
+      <section id="architecture">
+        <h2>3. 总体架构：模型是决策者，Runtime 是执行裁判</h2>
+        <p>下面这张图先只看方向，不要急着记文件名。上半部分是任务主路径，下半部分是围绕主路径的治理能力。</p>
+        <figure class="figure">
+          <!-- 中文说明：这张图展示 Maotuo 的主数据流，以及每个治理模块挂在哪个边界上。 -->
+          <svg viewBox="0 0 1160 690" role="img" aria-label="Maotuo总体架构图">
+            <defs><marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M 0 0 L 10 5 L 0 10 z" fill="#60708a" /></marker></defs>
+            <text x="580" y="30" text-anchor="middle" class="svg-title">Maotuo 总体架构：一条任务主路径，五类运行时治理</text>
+            <rect x="30" y="68" width="150" height="76" rx="12" class="svg-box svg-blue"/><text x="105" y="101" text-anchor="middle" class="svg-label">用户 / CLI</text><text x="105" y="124" text-anchor="middle" class="svg-small">提出 Coding 任务</text>
+            <rect x="230" y="68" width="170" height="76" rx="12" class="svg-box svg-blue"/><text x="315" y="101" text-anchor="middle" class="svg-label">Maotuo.ask()</text><text x="315" y="124" text-anchor="middle" class="svg-small">统一运行入口</text>
+            <rect x="450" y="68" width="190" height="76" rx="12" class="svg-box svg-blue"/><text x="545" y="101" text-anchor="middle" class="svg-label">AgentLoop.run()</text><text x="545" y="124" text-anchor="middle" class="svg-small">感知→决策→行动→记录</text>
+            <rect x="690" y="68" width="190" height="76" rx="12" class="svg-box svg-blue"/><text x="785" y="101" text-anchor="middle" class="svg-label">ContextManager</text><text x="785" y="124" text-anchor="middle" class="svg-small">组装本轮 Prompt</text>
+            <rect x="930" y="68" width="200" height="76" rx="12" class="svg-box svg-purple"/><text x="1030" y="101" text-anchor="middle" class="svg-label">模型客户端</text><text x="1030" y="124" text-anchor="middle" class="svg-small">DeepSeek / Ollama / 兼容 API</text>
+            <path d="M180 106 H230" class="svg-arrow"/><path d="M400 106 H450" class="svg-arrow"/><path d="M640 106 H690" class="svg-arrow"/><path d="M880 106 H930" class="svg-arrow"/>
+
+            <rect x="210" y="205" width="740" height="170" rx="18" fill="#f8fafc" stroke="#b8c6d9" stroke-dasharray="8 6"/><text x="580" y="232" text-anchor="middle" class="svg-label">Runtime 控制面：模型输出先经过这里，不能直接触碰系统</text>
+            <rect x="240" y="260" width="160" height="70" rx="11" class="svg-box svg-green"/><text x="320" y="291" text-anchor="middle" class="svg-label">Role / Skill</text><text x="320" y="314" text-anchor="middle" class="svg-small">权限 + 领域知识</text>
+            <rect x="440" y="260" width="180" height="70" rx="11" class="svg-box svg-amber"/><text x="530" y="291" text-anchor="middle" class="svg-label">ToolExecutor</text><text x="530" y="314" text-anchor="middle" class="svg-small">校验 + 审批 + 执行</text>
+            <rect x="660" y="260" width="130" height="70" rx="11" class="svg-box svg-green"/><text x="725" y="291" text-anchor="middle" class="svg-label">Evidence</text><text x="725" y="314" text-anchor="middle" class="svg-small">SHA256</text>
+            <rect x="830" y="260" width="90" height="70" rx="11" class="svg-box svg-red"/><text x="875" y="291" text-anchor="middle" class="svg-label">Gate</text><text x="875" y="314" text-anchor="middle" class="svg-small">发布</text>
+            <path d="M400 295 H440" class="svg-arrow"/><path d="M620 295 H660" class="svg-arrow"/><path d="M790 295 H830" class="svg-arrow"/>
+
+            <rect x="70" y="430" width="190" height="96" rx="12" class="svg-box svg-purple"/><text x="165" y="463" text-anchor="middle" class="svg-label">Context / Memory</text><text x="165" y="487" text-anchor="middle" class="svg-small">预算、裁剪、高价值信息</text><text x="165" y="507" text-anchor="middle" class="svg-small">消费者：模型客户端</text>
+            <rect x="320" y="430" width="190" height="96" rx="12" class="svg-box svg-green"/><text x="415" y="463" text-anchor="middle" class="svg-label">Trace / Audit</text><text x="415" y="487" text-anchor="middle" class="svg-small">过程记录 / 安全事件</text><text x="415" y="507" text-anchor="middle" class="svg-small">消费者：排障与审计</text>
+            <rect x="570" y="430" width="190" height="96" rx="12" class="svg-box svg-amber"/><text x="665" y="463" text-anchor="middle" class="svg-label">Checkpoint</text><text x="665" y="487" text-anchor="middle" class="svg-small">任务状态与恢复</text><text x="665" y="507" text-anchor="middle" class="svg-small">消费者：恢复 / Replay</text>
+            <rect x="820" y="430" width="270" height="96" rx="12" class="svg-box svg-red"/><text x="955" y="463" text-anchor="middle" class="svg-label">Evolution / Replay</text><text x="955" y="487" text-anchor="middle" class="svg-small">失败信号→候选→评测→审批</text><text x="955" y="507" text-anchor="middle" class="svg-small">消费者：受控提示策略</text>
+            <path d="M545 144 V190 H165 V430" class="svg-arrow svg-dashed"/><path d="M545 144 V430" class="svg-arrow svg-dashed"/><path d="M785 144 V190 H165" class="svg-arrow svg-dashed"/><path d="M875 330 V430 H415" class="svg-arrow svg-dashed"/><path d="M875 330 V430 H955" class="svg-arrow svg-dashed"/>
+            <text x="580" y="580" text-anchor="middle" class="svg-small">主路径：用户 → 运行入口 → AgentLoop → Prompt / 模型 → 工具或最终答案</text>
+            <text x="580" y="606" text-anchor="middle" class="svg-small">治理路径：每次工具执行都留下证据；最终答案必须通过发布门禁；失败可以恢复与复盘</text>
+          </svg>
+          <figcaption>图 1：Maotuo 的核心不是“多了很多框架”，而是把关键安全边界集中到 Runtime。</figcaption>
+        </figure>
+        <div class="quote">可以把模型想象成一名很聪明的工程师，把 Maotuo Runtime 想象成公司的代码仓库权限系统、发布系统和审计系统。工程师可以提出修改方案，但真正能不能读、能不能写、能不能发布，要由系统规则决定。</div>
+      </section>
+
+      <section id="runtime-loop">
+        <h2>4. 运行时主循环：一次 ask() 到底发生什么</h2>
+        <p>阅读代码时，先从 <code>Maotuo.ask()</code> 找到 <code>AgentLoop.run()</code>。所有能力最终都要回到这条主循环中。</p>
+        <figure class="figure">
+          <!-- 中文说明：这是一次 ask 的时序图，重点关注 final 分支为什么还要经过 ReleaseGate。 -->
+          <svg viewBox="0 0 1160 650" role="img" aria-label="Maotuo运行时主循环">
+            <defs><marker id="arrow2" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M 0 0 L 10 5 L 0 10 z" fill="#60708a" /></marker></defs>
+            <text x="580" y="30" text-anchor="middle" class="svg-title">一次 ask() 的运行时闭环</text>
+            <rect x="40" y="70" width="140" height="58" rx="10" class="svg-box svg-blue"/><text x="110" y="104" text-anchor="middle" class="svg-label">1. 创建 Run</text>
+            <rect x="225" y="70" width="160" height="58" rx="10" class="svg-box svg-purple"/><text x="305" y="104" text-anchor="middle" class="svg-label">2. 组装 Prompt</text>
+            <rect x="430" y="70" width="160" height="58" rx="10" class="svg-box svg-purple"/><text x="510" y="104" text-anchor="middle" class="svg-label">3. 请求模型</text>
+            <rect x="635" y="70" width="180" height="58" rx="10" class="svg-box svg-amber"/><text x="725" y="104" text-anchor="middle" class="svg-label">4. 解析工具 / final</text>
+            <rect x="860" y="70" width="250" height="58" rx="10" class="svg-box svg-green"/><text x="985" y="104" text-anchor="middle" class="svg-label">5. 工具执行或发布检查</text>
+            <path d="M180 99 H225" class="svg-arrow"/><path d="M385 99 H430" class="svg-arrow"/><path d="M590 99 H635" class="svg-arrow"/><path d="M815 99 H860" class="svg-arrow"/>
+            <path d="M985 128 V180 H725 V220" class="svg-arrow"/>
+            <rect x="625" y="220" width="200" height="64" rx="10" class="svg-box svg-amber"/><text x="725" y="248" text-anchor="middle" class="svg-label">如果是工具调用</text><text x="725" y="270" text-anchor="middle" class="svg-small">记录结果、证据、记忆、Trace</text>
+            <path d="M625 252 H520 V350" class="svg-arrow"/>
+            <rect x="410" y="350" width="220" height="65" rx="10" class="svg-box svg-blue"/><text x="520" y="378" text-anchor="middle" class="svg-label">回到下一轮模型请求</text><text x="520" y="400" text-anchor="middle" class="svg-small">直到 final 或预算耗尽</text>
+            <path d="M825 252 H930 V350" class="svg-arrow"/>
+            <rect x="830" y="350" width="280" height="65" rx="10" class="svg-box svg-red"/><text x="970" y="378" text-anchor="middle" class="svg-label">如果是 final：ReleaseGate</text><text x="970" y="400" text-anchor="middle" class="svg-small">检查文件是否 stale</text>
+            <path d="M970 415 V470" class="svg-arrow"/>
+            <rect x="830" y="470" width="130" height="60" rx="10" class="svg-box svg-green"/><text x="895" y="505" text-anchor="middle" class="svg-label">通过</text>
+            <rect x="980" y="470" width="130" height="60" rx="10" class="svg-box svg-red"/><text x="1045" y="495" text-anchor="middle" class="svg-label">stale</text><text x="1045" y="515" text-anchor="middle" class="svg-small">重读 / 重试</text>
+            <path d="M895 530 V580 H110 V128" class="svg-arrow svg-dashed"/><path d="M1045 530 V580 H305 V128" class="svg-arrow svg-dashed"/>
+            <text x="895" y="560" text-anchor="middle" class="svg-small">成功：保存报告、Checkpoint、Trace，返回答案</text>
+            <text x="580" y="625" text-anchor="middle" class="svg-small">循环结束条件：final 通过门禁、达到工具步数上限、模型失败或 stale 重试耗尽</text>
+          </svg>
+          <figcaption>图 2：Maotuo 与普通 Tool Loop 的关键区别，是 final 不是直接返回，而是要经过 ReleaseGate。</figcaption>
+        </figure>
+        <div class="step"><div class="step-no">1</div><div class="step-body"><strong>创建本次 Run，并清理上一次运行的状态</strong><span><code>AgentLoop.run()</code> 开始时重置发布门禁的重试计数，并通过 <code>evidence_store.start_run(run_id)</code> 做证据隔离。这样连续调用两次 <code>ask()</code> 时，第一次读过的文件不会污染第二次。</span></div></div>
+        <div class="step"><div class="step-no">2</div><div class="step-body"><strong>构造当前轮 Prompt</strong><span><code>ContextManager.build()</code> 把 Role、Skill、当前请求、相关记忆、历史和高价值上下文组装起来；普通历史可以被裁剪，但硬约束优先保留。</span></div></div>
+        <div class="step"><div class="step-no">3</div><div class="step-body"><strong>调用模型并解析输出</strong><span>模型输出只能落到两个方向：提出一个结构化工具调用，或者提出最终答案。模型不是直接执行者。</span></div></div>
+        <div class="step"><div class="step-no">4</div><div class="step-body"><strong>工具调用必须过 Runtime 总闸口</strong><span>工具名、参数、路径、重复调用、审批策略和执行结果，都由 <code>ToolExecutor</code> 和 Runtime 统一处理。</span></div></div>
+        <div class="step"><div class="step-no">5</div><div class="step-body"><strong>最终答案必须过发布门禁</strong><span>如果证据中的文件 SHA256 与当前文件不一致，当前 final 被阻止；系统要求模型下一轮重新读取，最多重试两次。</span></div></div>
+      </section>
+
+      <section id="tool-safety">
+        <h2>5. 工具安全：模型只能“申请动作”，不能直接拥有动作</h2>
+        <p>这是 Maotuo 最适合面试解释的安全边界。无论模型输出多么像一条命令，真正的执行都必须进入统一入口。</p>
+        <figure class="figure">
+          <!-- 中文说明：模型输出和真实副作用之间必须存在不可绕过的 Runtime 检查链。 -->
+          <svg viewBox="0 0 1160 390" role="img" aria-label="工具调用安全边界">
+            <defs><marker id="arrow3" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M 0 0 L 10 5 L 0 10 z" fill="#60708a" /></marker></defs>
+            <text x="580" y="30" text-anchor="middle" class="svg-title">工具调用安全边界：模型提议，Runtime 裁决</text>
+            <rect x="35" y="90" width="180" height="100" rx="12" class="svg-box svg-purple"/><text x="125" y="128" text-anchor="middle" class="svg-label">模型输出</text><text x="125" y="153" text-anchor="middle" class="svg-small">&lt;tool&gt; 结构化请求</text><text x="125" y="175" text-anchor="middle" class="svg-small">不直接产生副作用</text>
+            <path d="M215 140 H260" class="svg-arrow"/>
+            <rect x="260" y="70" width="270" height="140" rx="14" fill="#f8fafc" stroke="#b8c6d9" stroke-dasharray="7 5"/><text x="395" y="96" text-anchor="middle" class="svg-label">Runtime 总闸口</text><text x="395" y="123" text-anchor="middle" class="svg-small">① 工具白名单</text><text x="395" y="146" text-anchor="middle" class="svg-small">② 参数与路径校验</text><text x="395" y="169" text-anchor="middle" class="svg-small">③ 重复调用与审批检查</text><text x="395" y="192" text-anchor="middle" class="svg-small">④ 执行后脱敏与记录</text>
+            <path d="M530 140 H580" class="svg-arrow"/>
+            <rect x="580" y="90" width="180" height="100" rx="12" class="svg-box svg-amber"/><text x="670" y="128" text-anchor="middle" class="svg-label">ToolExecutor</text><text x="670" y="153" text-anchor="middle" class="svg-small">统一执行路径</text><text x="670" y="175" text-anchor="middle" class="svg-small">消费者：AgentLoop</text>
+            <path d="M760 140 H805" class="svg-arrow"/>
+            <rect x="805" y="90" width="150" height="100" rx="12" class="svg-box svg-green"/><text x="880" y="128" text-anchor="middle" class="svg-label">工具 / 工作区</text><text x="880" y="153" text-anchor="middle" class="svg-small">read / write / patch</text><text x="880" y="175" text-anchor="middle" class="svg-small">shell 受限执行</text>
+            <path d="M955 140 H1000" class="svg-arrow"/>
+            <rect x="1000" y="90" width="125" height="100" rx="12" class="svg-box svg-red"/><text x="1062" y="128" text-anchor="middle" class="svg-label">证据 / Trace</text><text x="1062" y="153" text-anchor="middle" class="svg-small">记录副作用</text><text x="1062" y="175" text-anchor="middle" class="svg-small">可审计</text>
+            <text x="580" y="270" text-anchor="middle" class="svg-small">写工具不是“模型能说出来就能用”，而是“当前 Role 允许 + 参数合法 + 需要的审批已通过”才会执行。</text>
+            <text x="580" y="300" text-anchor="middle" class="svg-small">工具失败、权限拒绝、路径越界、敏感信息都会变成结构化结果回到下一轮，而不是绕过 Runtime。</text>
+          </svg>
+          <figcaption>图 3：模型和系统副作用之间的隔离，是 Maotuo “私有化安全 Coding Agent”定位的基础。</figcaption>
+        </figure>
+        <div class="grid">
+          <article class="card"><h3>工具白名单</h3><p>基础配置和 Role 共同决定当前运行可以看到哪些工具。Role 只能收缩权限，不能扩大基础安全边界。</p><p><strong>消费者：</strong>模型提示和工具调用校验。<br/><strong>调用者：</strong><code>Maotuo</code> 初始化、<code>validate_tool()</code>。</p></article>
+          <article class="card"><h3>路径和参数</h3><p>工具在真正执行之前检查参数格式、工作区边界、文件是否允许访问，避免把模型输出直接当成系统路径。</p><p><strong>消费者：</strong><code>ToolExecutor</code>。<br/><strong>调用者：</strong><code>AgentLoop</code> 的每次工具循环。</p></article>
+          <article class="card"><h3>审批和脱敏</h3><p>高风险工具可以先进入审批策略；工具返回结果和报告写入前还要做敏感信息处理。</p><p><strong>消费者：</strong>企业内网的操作安全和审计。<br/><strong>调用者：</strong><code>approve()</code>、工具执行与报告生成流程。</p></article>
+        </div>
+      </section>
+
+      <section id="evidence">
+        <h2>6. 安全证据链：为什么每次工具执行后都要记录 SHA256</h2>
+        <p>这里的关键词是 <strong>stale</strong>，中文可以理解为“证据过期”。Agent 读取文件后，文件可能被人、脚本或另一个进程修改；如果最终答案仍然基于旧内容，就会产生静默错误。</p>
+        <figure class="figure">
+          <!-- 中文说明：stale 不是一个静态标签，而是一条会阻止发布并反馈给模型的动作链。 -->
+          <svg viewBox="0 0 1160 560" role="img" aria-label="证据链和stale处理流程">
+            <defs><marker id="arrow4" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M 0 0 L 10 5 L 0 10 z" fill="#60708a" /></marker></defs>
+            <text x="580" y="30" text-anchor="middle" class="svg-title">Evidence + ReleaseGate：从记录证据到阻止过期发布</text>
+            <rect x="35" y="80" width="160" height="78" rx="11" class="svg-box svg-blue"/><text x="115" y="113" text-anchor="middle" class="svg-label">工具读取文件</text><text x="115" y="137" text-anchor="middle" class="svg-small">read / patch / write</text>
+            <rect x="245" y="80" width="190" height="78" rx="11" class="svg-box svg-green"/><text x="340" y="113" text-anchor="middle" class="svg-label">EvidenceStore</text><text x="340" y="137" text-anchor="middle" class="svg-small">保存 path + SHA256 + Run</text>
+            <rect x="485" y="80" width="190" height="78" rx="11" class="svg-box svg-amber"/><text x="580" y="113" text-anchor="middle" class="svg-label">外部可能修改文件</text><text x="580" y="137" text-anchor="middle" class="svg-small">人 / 脚本 / 其他进程</text>
+            <rect x="725" y="80" width="190" height="78" rx="11" class="svg-box svg-red"/><text x="820" y="113" text-anchor="middle" class="svg-label">ReleaseGate.check()</text><text x="820" y="137" text-anchor="middle" class="svg-small">重新计算并比较 SHA256</text>
+            <rect x="965" y="80" width="160" height="78" rx="11" class="svg-box svg-green"/><text x="1045" y="113" text-anchor="middle" class="svg-label">安全发布</text><text x="1045" y="137" text-anchor="middle" class="svg-small">返回 final</text>
+            <path d="M195 119 H245" class="svg-arrow"/><path d="M435 119 H485" class="svg-arrow"/><path d="M675 119 H725" class="svg-arrow"/><path d="M915 119 H965" class="svg-arrow"/>
+            <path d="M820 158 V225" class="svg-arrow"/>
+            <rect x="700" y="225" width="240" height="72" rx="11" class="svg-box svg-red"/><text x="820" y="255" text-anchor="middle" class="svg-label">发现 stale：阻止当前 final</text><text x="820" y="278" text-anchor="middle" class="svg-small">写入 trace / audit 安全事件</text>
+            <path d="M700 261 H530 V365" class="svg-arrow"/>
+            <rect x="400" y="365" width="260" height="74" rx="11" class="svg-box svg-blue"/><text x="530" y="395" text-anchor="middle" class="svg-label">下一轮 Prompt 告诉模型</text><text x="530" y="420" text-anchor="middle" class="svg-small">文件可能过期，请重新读取</text>
+            <path d="M400 402 H250 V490" class="svg-arrow"/>
+            <rect x="100" y="490" width="300" height="52" rx="10" class="svg-box svg-purple"/><text x="250" y="522" text-anchor="middle" class="svg-label">模型重读后重新回答，最多 2 次</text>
+            <path d="M660 402 H790 V490" class="svg-arrow"/>
+            <rect x="650" y="490" width="300" height="52" rx="10" class="svg-box svg-red"/><text x="800" y="522" text-anchor="middle" class="svg-label">重试耗尽：任务失败 + 进化信号 + Replay</text>
+            <text x="580" y="340" text-anchor="middle" class="svg-small">重点：stale 不是“记一条日志就算了”，而是会改变任务状态和模型下一轮输入。</text>
+          </svg>
+          <figcaption>图 4：stale 的完整动作链：阻止发布、反馈重读、限制重试、失败沉淀。</figcaption>
+        </figure>
+        <div class="notice note-green"><strong>Run 隔离为什么重要：</strong><code>EvidenceStore.start_run(run_id)</code> 会在新任务开始时切换 Run 并清理旧证据。否则第一次 <code>ask()</code> 读过的文件会被第二次任务错误地带入发布检查。</div>
+        <div class="quote">面试时我会这样说：我们没有把“文件内容”当成永久真相，而是把它当成某一次 Run、某一次工具执行时观察到的证据。最终发布前再次校验哈希，只有证据没有过期，答案才允许返回。</div>
+      </section>
+
+      <section id="context">
+        <h2>7. 上下文治理：不是尽可能塞多，而是把高价值信息放在前面</h2>
+        <p>长任务的问题不是模型完全没有上下文，而是上下文中混入了重复读取、旧失败、普通历史和无关记忆。Maotuo 用 <code>ContextManager</code> 进行预算化组装。</p>
+        <figure class="figure">
+          <!-- 中文说明：裁剪顺序表达优先级，越靠上越应该被保护，越靠下越适合被压缩。 -->
+          <svg viewBox="0 0 1160 530" role="img" aria-label="上下文治理分层图">
+            <text x="580" y="30" text-anchor="middle" class="svg-title">ContextManager：高价值上下文提取与分层裁剪</text>
+            <path d="M140 90 H1020 L920 455 H240 Z" fill="#f8fafc" stroke="#b8c6d9" stroke-width="2"/>
+            <path d="M210 145 H950 L885 410 H275 Z" fill="#fff" stroke="#b8c6d9"/>
+            <path d="M280 200 H880 L845 365 H315 Z" fill="#fff" stroke="#b8c6d9"/>
+            <rect x="375" y="96" width="410" height="58" rx="10" class="svg-box svg-green"/><text x="580" y="122" text-anchor="middle" class="svg-label">最高保护层：Role / Skill / 当前请求</text><text x="580" y="143" text-anchor="middle" class="svg-small">身份、工具边界、领域硬约束、用户当前目标</text>
+            <rect x="320" y="165" width="520" height="58" rx="10" class="svg-box svg-blue"/><text x="580" y="191" text-anchor="middle" class="svg-label">高价值上下文：失败、stale、文件变化、证据、Checkpoint</text><text x="580" y="212" text-anchor="middle" class="svg-small">告诉模型“哪里出过问题、下一步必须注意什么”</text>
+            <rect x="270" y="235" width="620" height="58" rx="10" class="svg-box svg-purple"/><text x="580" y="261" text-anchor="middle" class="svg-label">任务指导：Coding Prompt / 已审批提示策略 / 相关领域知识</text><text x="580" y="282" text-anchor="middle" class="svg-small">在 Role 过滤后才允许注入</text>
+            <rect x="220" y="305" width="720" height="58" rx="10" class="svg-box svg-amber"/><text x="580" y="331" text-anchor="middle" class="svg-label">可压缩层：相关记忆、普通记忆、历史消息、重复工具结果</text><text x="580" y="352" text-anchor="middle" class="svg-small">先合并重复读取，再按预算裁剪</text>
+            <text x="580" y="405" text-anchor="middle" class="svg-label">裁剪原则：先牺牲低价值历史，保护安全约束、当前请求和失败信息</text>
+            <text x="580" y="435" text-anchor="middle" class="svg-small">所以 Prompt 变短不等于信息变少；它可能意味着重复内容变少、高价值内容更靠前。</text>
+            <path d="M1000 175 H1080" class="svg-arrow"/><text x="1085" y="179" class="svg-small">优先保留</text><path d="M1000 330 H1080" class="svg-arrow"/><text x="1085" y="334" class="svg-small">优先裁剪</text>
+          </svg>
+          <figcaption>图 5：上下文治理的核心是“分层优先级”，不是简单截断字符串。</figcaption>
+        </figure>
+        <div class="grid">
+          <article class="card"><h3>为什么要合并重复读取</h3><p>同一个文件被模型反复读取时，旧结果不断占用 Prompt，还会让模型误以为自己获得了新信息。Maotuo 将重复读取合并，减少无效 token。</p></article>
+          <article class="card"><h3>为什么 Role/Skill 要保护</h3><p>Role 是权限和身份边界，Skill 是当前领域知识。如果它们在普通裁剪中被截掉，模型可能忘记“我是谁”和“我能做什么”。</p></article>
+          <article class="card"><h3>为什么失败信息要置顶</h3><p>模型下一轮最需要知道的不是很久以前的完整对话，而是上一轮为什么失败、哪个文件 stale、下一步必须重读什么。</p></article>
+        </div>
+      </section>
+
+      <section id="role-skill">
+        <h2>8. Role 与 Skill：一个管边界，一个管知识</h2>
+        <figure class="figure">
+          <!-- 中文说明：Role 参与权限收缩和提示注入，Skill 主要参与关键词匹配和领域知识注入。 -->
+          <svg viewBox="0 0 1160 420" role="img" aria-label="Role和Skill架构图">
+            <defs><marker id="arrow5" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M 0 0 L 10 5 L 0 10 z" fill="#60708a" /></marker></defs>
+            <text x="580" y="30" text-anchor="middle" class="svg-title">Role + Skill：权限约束与领域知识分工</text>
+            <rect x="65" y="90" width="220" height="130" rx="13" class="svg-box svg-green"/><text x="175" y="125" text-anchor="middle" class="svg-label">Role：我是谁</text><text x="175" y="153" text-anchor="middle" class="svg-small">base_prompt</text><text x="175" y="177" text-anchor="middle" class="svg-small">allowed_tools</text><text x="175" y="201" text-anchor="middle" class="svg-small">只读 / 可修改角色</text>
+            <rect x="470" y="90" width="220" height="130" rx="13" class="svg-box svg-purple"/><text x="580" y="125" text-anchor="middle" class="svg-label">Skill：我懂什么</text><text x="580" y="153" text-anchor="middle" class="svg-small">关键词匹配</text><text x="580" y="177" text-anchor="middle" class="svg-small">prompt_fragment</text><text x="580" y="201" text-anchor="middle" class="svg-small">安全 / 测试 / Python 等知识</text>
+            <rect x="875" y="90" width="220" height="130" rx="13" class="svg-box svg-blue"/><text x="985" y="125" text-anchor="middle" class="svg-label">当前运行</text><text x="985" y="153" text-anchor="middle" class="svg-small">工具白名单已收缩</text><text x="985" y="177" text-anchor="middle" class="svg-small">Skill 片段已注入</text><text x="985" y="201" text-anchor="middle" class="svg-small">上下文裁剪受保护</text>
+            <path d="M285 155 H470" class="svg-arrow"/><text x="377" y="143" text-anchor="middle" class="svg-small">权限 + 身份</text><path d="M690 155 H875" class="svg-arrow"/><text x="782" y="143" text-anchor="middle" class="svg-small">注入知识</text>
+            <rect x="250" y="295" width="660" height="62" rx="11" class="svg-box svg-amber"/><text x="580" y="321" text-anchor="middle" class="svg-label">受控自进化指导也必须先经过 Role 过滤</text><text x="580" y="343" text-anchor="middle" class="svg-small">只读 Reviewer 不会因为一条已审批策略而看到 write / patch / shell 指导</text>
+            <path d="M985 220 V260 H580 V295" class="svg-arrow svg-dashed"/>
+          </svg>
+          <figcaption>图 6：Role 不是一句人设 Prompt，而是会参与工具权限收缩；Skill 则是按任务关键词提供领域知识。</figcaption>
+        </figure>
+        <table>
+          <thead><tr><th>对象</th><th>它负责什么</th><th>消费者是谁</th><th>被谁调用</th></tr></thead>
+          <tbody>
+            <tr><td><code>Role</code></td><td>定义身份、基础提示和允许工具集合。</td><td>Runtime 权限边界、模型上下文。</td><td><code>Maotuo</code> 初始化时读取；<code>ContextManager</code> 构造 Prompt 时注入。</td></tr>
+            <tr><td><code>Skill</code></td><td>根据用户问题关键词匹配领域知识片段。</td><td>模型的任务理解和执行指导。</td><td><code>RoleSkillManager.active_skills()</code> 被上下文构造流程调用。</td></tr>
+            <tr><td><code>filter_guidance()</code></td><td>过滤与当前 Role 冲突的进化指导。</td><td>只读角色的安全提示一致性。</td><td><code>Maotuo._filtered_prompt_strategy()</code> 在注入前调用。</td></tr>
+          </tbody>
+        </table>
+      </section>
+
+      <section id="evolution">
+        <h2>9. 受控自进化：学习提示策略，不学习权限边界</h2>
+        <p>Maotuo 的自进化不是“让模型自己改代码、自己扩大权限”，而是把失败转化成提示策略候选，再经过自动评测和人工审批。</p>
+        <figure class="figure">
+          <!-- 中文说明：候选只有在自动评测通过且人工批准后，才会成为 active prompt strategy。 -->
+          <svg viewBox="0 0 1160 570" role="img" aria-label="受控自进化闭环">
+            <defs><marker id="arrow6" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M 0 0 L 10 5 L 0 10 z" fill="#60708a" /></marker></defs>
+            <text x="580" y="30" text-anchor="middle" class="svg-title">受控自进化：失败学习闭环，但不改变安全底座</text>
+            <rect x="45" y="90" width="180" height="76" rx="11" class="svg-box svg-red"/><text x="135" y="122" text-anchor="middle" class="svg-label">失败 / stale</text><text x="135" y="146" text-anchor="middle" class="svg-small">任务错误、发布被阻断</text>
+            <rect x="275" y="90" width="180" height="76" rx="11" class="svg-box svg-amber"/><text x="365" y="122" text-anchor="middle" class="svg-label">SignalCollector</text><text x="365" y="146" text-anchor="middle" class="svg-small">整理失败信号</text>
+            <rect x="505" y="90" width="180" height="76" rx="11" class="svg-box svg-purple"/><text x="595" y="122" text-anchor="middle" class="svg-label">Candidate</text><text x="595" y="146" text-anchor="middle" class="svg-small">生成提示策略候选</text>
+            <rect x="735" y="90" width="180" height="76" rx="11" class="svg-box svg-blue"/><text x="825" y="122" text-anchor="middle" class="svg-label">自动评测</text><text x="825" y="146" text-anchor="middle" class="svg-small">Golden + Replay</text>
+            <rect x="965" y="90" width="150" height="76" rx="11" class="svg-box svg-green"/><text x="1040" y="122" text-anchor="middle" class="svg-label">人工审批</text><text x="1040" y="146" text-anchor="middle" class="svg-small">通过才激活</text>
+            <path d="M225 128 H275" class="svg-arrow"/><path d="M455 128 H505" class="svg-arrow"/><path d="M685 128 H735" class="svg-arrow"/><path d="M915 128 H965" class="svg-arrow"/>
+            <path d="M1040 166 V235 H825 V270" class="svg-arrow"/>
+            <rect x="710" y="270" width="230" height="72" rx="11" class="svg-box svg-green"/><text x="825" y="300" text-anchor="middle" class="svg-label">active prompt strategy</text><text x="825" y="323" text-anchor="middle" class="svg-small">注入前仍要经过 Role 过滤</text>
+            <path d="M710 306 H530 V410" class="svg-arrow"/>
+            <rect x="360" y="410" width="340" height="75" rx="11" class="svg-box svg-blue"/><text x="530" y="440" text-anchor="middle" class="svg-label">下一次任务获得更好的提示指导</text><text x="530" y="464" text-anchor="middle" class="svg-small">只改变 Prompt 策略，不改变工具权限</text>
+            <path d="M360 447 H150 V128" class="svg-arrow svg-dashed"/>
+            <rect x="65" y="270" width="250" height="72" rx="11" class="svg-box svg-red"/><text x="190" y="300" text-anchor="middle" class="svg-label">评测失败：关闭候选</text><text x="190" y="323" text-anchor="middle" class="svg-small">不能仅靠人工审批绕过评测</text>
+            <path d="M825 166 V270" class="svg-arrow"/>
+            <text x="580" y="535" text-anchor="middle" class="svg-small">安全底座：工具白名单、路径校验、审批规则、Evidence、ReleaseGate 永远不由自进化修改。</text>
+          </svg>
+          <figcaption>图 7：受控自进化的关键是“候选隔离 + 自动评测 + 人工批准 + Role 过滤 + fail-closed”。</figcaption>
+        </figure>
+        <div class="notice note-red"><strong>评测失败默认不能激活：</strong><code>EvolutionStore.approve()</code> 会检查 <code>evaluation.approval_ready</code>。未通过 GoldenTask / ReplayCase 门槛的候选，不能因为人工点了批准就进入 active。</div>
+        <div class="quote">我会把它解释为“提示策略的灰度发布系统”：失败先变成候选，候选先在封闭任务上验证，再由人批准。自进化可以改善模型怎么做事，但不能让模型获得原本没有的权限。</div>
+      </section>
+
+      <section id="artifacts">
+        <h2>10. 运行工件：为什么要同时有 Trace、Audit、Report、Evidence、Checkpoint</h2>
+        <p>这些文件不是重复保存同一份日志，而是服务不同消费者。理解这一点，你就能回答“审计和调试为什么要分开”。</p>
+        <figure class="figure">
+          <!-- 中文说明：每类运行工件有独立消费者，避免把调试日志等同于安全审计证据。 -->
+          <svg viewBox="0 0 1160 410" role="img" aria-label="运行工件及消费者">
+            <defs><marker id="arrow7" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M 0 0 L 10 5 L 0 10 z" fill="#60708a" /></marker></defs>
+            <text x="580" y="30" text-anchor="middle" class="svg-title">运行工件：一条运行，多种用途</text>
+            <rect x="430" y="75" width="300" height="76" rx="12" class="svg-box svg-blue"/><text x="580" y="109" text-anchor="middle" class="svg-label">一次 Maotuo Run</text><text x="580" y="133" text-anchor="middle" class="svg-small">工具、模型、状态、文件、发布</text>
+            <rect x="45" y="235" width="180" height="85" rx="11" class="svg-box svg-purple"/><text x="135" y="268" text-anchor="middle" class="svg-label">Trace</text><text x="135" y="293" text-anchor="middle" class="svg-small">完整过程时间线</text>
+            <rect x="255" y="235" width="180" height="85" rx="11" class="svg-box svg-red"/><text x="345" y="268" text-anchor="middle" class="svg-label">Audit</text><text x="345" y="293" text-anchor="middle" class="svg-small">独立安全事件</text>
+            <rect x="465" y="235" width="180" height="85" rx="11" class="svg-box svg-green"/><text x="555" y="268" text-anchor="middle" class="svg-label">Report</text><text x="555" y="293" text-anchor="middle" class="svg-small">人可读结论与统计</text>
+            <rect x="675" y="235" width="180" height="85" rx="11" class="svg-box svg-amber"/><text x="765" y="268" text-anchor="middle" class="svg-label">Evidence</text><text x="765" y="293" text-anchor="middle" class="svg-small">文件哈希证据</text>
+            <rect x="885" y="235" width="230" height="85" rx="11" class="svg-box svg-blue"/><text x="1000" y="268" text-anchor="middle" class="svg-label">Checkpoint</text><text x="1000" y="293" text-anchor="middle" class="svg-small">中断后的恢复状态</text>
+            <path d="M500 151 V195 H135 V235" class="svg-arrow svg-dashed"/><path d="M550 151 V195 H345 V235" class="svg-arrow svg-dashed"/><path d="M580 151 V235" class="svg-arrow svg-dashed"/><path d="M610 151 V195 H765 V235" class="svg-arrow svg-dashed"/><path d="M660 151 V195 H1000 V235" class="svg-arrow svg-dashed"/>
+            <text x="580" y="370" text-anchor="middle" class="svg-small">调试看 Trace，审计看 Audit，汇报看 Report，发布看 Evidence，恢复看 Checkpoint。</text>
+          </svg>
+          <figcaption>图 8：安全事件独立写入 Audit，避免普通调试信息淹没真正需要审计的事件。</figcaption>
+        </figure>
+        <table>
+          <thead><tr><th>工件</th><th>记录什么</th><th>主要消费者</th></tr></thead>
+          <tbody>
+            <tr><td><code>trace.jsonl</code></td><td>模型请求、工具调用、解析、状态变化、stale 等事件时间线。</td><td>开发排障、失败复盘、Replay 抽取。</td></tr>
+            <tr><td><code>audit.jsonl</code></td><td>权限拒绝、审批、高风险动作、stale、敏感信息等安全事件。</td><td>安全审查、合规审计、事故调查。</td></tr>
+            <tr><td><code>report.json</code></td><td>任务结果、结束原因、步数、失败摘要和运行统计。</td><td>CLI 展示、评测汇总、简历数据整理。</td></tr>
+            <tr><td><code>evidence</code></td><td>本次 Run 观察到的文件路径和 SHA256。</td><td>ReleaseGate 的发布前校验。</td></tr>
+            <tr><td><code>checkpoint</code></td><td>可恢复的任务状态和关键上下文。</td><td>中断恢复、失败重放、任务继续执行。</td></tr>
+          </tbody>
+        </table>
+      </section>
+
+      <section id="modules">
+        <h2>11. 模块地图：每个模块给自己问三句话</h2>
+        <p>你之前提出的约束非常适合用来读代码：<strong>它做什么？消费者是谁？它被谁调用？</strong></p>
+        <table>
+          <thead><tr><th>模块 / 文件</th><th>一句话职责</th><th>消费者是谁</th><th>被谁调用</th></tr></thead>
+          <tbody>
+            <tr><td><code>maotuo/cli.py</code></td><td>命令行入口，加载配置并启动一次任务。</td><td>开发者、部署运维人员。</td><td>用户命令；内部创建 <code>Maotuo</code>。</td></tr>
+            <tr><td><code>maotuo/runtime.py</code></td><td>Runtime 总装配和安全总闸口。</td><td><code>AgentLoop</code>、模型、工具执行流程。</td><td><code>cli.py</code> 或调用方通过 <code>Maotuo.ask()</code>；循环中调用 <code>run_tool()</code>、<code>check_release_gate()</code>。</td></tr>
+            <tr><td><code>maotuo/agent_loop.py</code></td><td>编排一轮轮“构造 Prompt→请求模型→工具或 final”。</td><td>一次 Coding 任务的完成结果。</td><td><code>Maotuo.ask()</code> 调用 <code>AgentLoop.run()</code>。</td></tr>
+            <tr><td><code>maotuo/context_manager.py</code></td><td>按预算组装、保护和裁剪上下文。</td><td>模型客户端的输入 Prompt。</td><td><code>AgentLoop.run()</code> 每次模型请求前调用 <code>build()</code>。</td></tr>
+            <tr><td><code>maotuo/tool_executor.py</code></td><td>统一执行工具，承接校验、审批、执行和结果记录。</td><td>文件工具、受限 Shell、证据和 Trace。</td><td><code>AgentLoop</code> 和 Runtime 的工具执行入口。</td></tr>
+            <tr><td><code>maotuo/evidence.py</code></td><td>记录文件 SHA256，并检查证据是否 stale。</td><td><code>ReleaseGate</code>、审计和报告。</td><td>工具执行后由 Runtime 观察；final 前由 Gate 检查。</td></tr>
+            <tr><td><code>maotuo/role_skill.py</code></td><td>提供 Role 权限和 Skill 领域提示。</td><td>工具白名单和 ContextManager。</td><td>Runtime 初始化、上下文构造、进化指导注入前过滤。</td></tr>
+            <tr><td><code>maotuo/evolution.py</code></td><td>保存失败信号、候选、评测结果和审批状态。</td><td>受控 Prompt 策略治理。</td><td>AgentLoop 失败处理、Runtime 信号记录、CLI 审批。</td></tr>
+            <tr><td><code>maotuo/evaluation/replay.py</code></td><td>运行 GoldenTask，抽取和回放 ReplayCase。</td><td>候选评测和失败复盘。</td><td><code>EvolutionStore.create_candidate()</code> 与评测命令。</td></tr>
+            <tr><td><code>maotuo/checkpoint.py</code></td><td>保存任务状态，让任务可恢复。</td><td>恢复执行和失败分析。</td><td>AgentLoop 在工具执行、失败、成功等关键节点调用。</td></tr>
+            <tr><td><code>maotuo/run_store.py</code></td><td>管理每次 Run 的目录、Trace、Report 等持久化位置。</td><td>运行记录、评测和审计系统。</td><td>Runtime / AgentLoop 初始化和结束流程。</td></tr>
+          </tbody>
+        </table>
+      </section>
+
+      <section id="script">
+        <h2>12. 面试或汇报逐字稿</h2>
+        <p>下面可以直接照着讲。括号里的内容是你可以根据面试官追问展开的方向，不需要全部背。</p>
+
+        <details open><summary>逐字稿一：一分钟介绍项目</summary><div class="quote">我做的是 Maotuo，一个基于 Pico 增量实现的轻量级、安全可审计的垂类 Coding Agent Runtime。它面向企业内网代码审查、测试修复和受控修改场景。Pico 原本已经具备模型和工具的基本循环，Maotuo 在这个循环外增加了 Runtime 控制面：模型只能提出工具调用，工具白名单、路径校验、审批、文件证据和最终发布都由 Runtime 控制。这样做主要是为了解决 Coding Agent 在真实仓库里最危险的几个问题：模型可能使用越权工具，文件在读取后可能被外部修改，Prompt 可能因为长任务不断膨胀，失败经验也可能未经验证就被重新使用。Maotuo 用 Role/Skill 做垂类定制，用 Evidence 和 ReleaseGate 防止过期证据发布，用 Trace、Audit 和 Checkpoint 支持审计与恢复，再用 GoldenTask、ReplayCase 和人工审批形成受控自进化闭环。</div></details>
+
+        <details><summary>逐字稿二：从用户请求到最终答案</summary><div class="quote">一次请求从 <code>Maotuo.ask()</code> 进入 <code>AgentLoop.run()</code>。运行时先创建一个独立的 Run，并清理上一轮的发布状态和证据。然后 <code>ContextManager</code> 根据当前 Role、Skill、当前请求、相关记忆、历史消息和失败信息组装 Prompt。模型返回后，Runtime 会把结果解析成工具调用或者最终答案。如果是工具调用，它必须通过工具白名单、参数和路径检查，必要时还要经过审批，之后才由 <code>ToolExecutor</code> 执行。工具执行结束后，涉及的文件会记录 SHA256，并把事件写进 Trace。模型继续下一轮。如果模型给出 final，Maotuo 不会直接返回，而是先由 <code>ReleaseGate</code> 重新检查文件哈希。如果发现文件被修改，就阻止当前 final，把“文件可能过期，请重新读取”反馈到下一轮 Prompt，最多重试两次。只有通过发布门禁，答案才会被保存并返回。</div></details>
+
+        <details><summary>逐字稿三：为什么不能让模型直接执行工具</summary><div class="quote">模型适合做决策和规划，但模型输出本质上是不可信的文本。它可能生成错误路径、调用不适合当前角色的工具，或者在不知道文件已经变化的情况下继续作答。所以 Maotuo 把模型和系统副作用分开：模型只能输出结构化的工具申请，Runtime 通过统一入口检查工具白名单、参数、路径、重复调用和审批策略，然后才执行。这个设计的好处是，即使模型提示被误解或者模型产生幻觉，安全边界仍然在 Runtime，而不是依赖模型“自觉遵守”。</div></details>
+
+        <details><summary>逐字稿四：如果文件在读取后被改了怎么办</summary><div class="quote">每次工具执行后，Maotuo 会对涉及文件计算 SHA256，并把路径、哈希和当前 Run 关联起来。最终答案发布前，ReleaseGate 会重新计算这些文件的哈希。如果哈希变化，说明 Agent 看到的证据已经过期，当前 final 会被阻止。系统会写入 stale 事件，并在下一轮 Prompt 中明确告诉模型哪些文件可能过期、需要重新读取。这个过程最多重试两次；如果仍然无法获得稳定证据，任务终止并生成失败信号和 ReplayCase。也就是说，stale 不是标记一下，而是会触发重读、阻止发布、限次重试、失败沉淀的一整条链路。</div></details>
+
+        <details><summary>逐字稿五：Role 和 Skill 有什么区别</summary><div class="quote">Role 解决的是“我是谁，以及我能做什么”。例如只读 Reviewer 的 Role 可以只开放读取、搜索和测试工具，不开放写文件工具。Skill 解决的是“我掌握什么领域知识”，比如安全审查 Skill 可以注入敏感信息、越权路径和测试验证方面的提示。Role 同时参与权限收缩和 Prompt 保护，Skill 主要根据用户请求的关键词匹配后注入领域片段。即使某个自进化策略建议使用写工具，在注入前也要经过当前 Role 过滤，所以只读角色不会因为提示策略而获得写权限。</div></details>
+
+        <details><summary>逐字稿六：受控自进化如何避免失控</summary><div class="quote">Maotuo 的自进化只针对 Prompt 策略，不改工具白名单、不改路径校验、不改审批规则和 ReleaseGate。任务失败或 stale 会产生结构化信号，系统据此生成候选提示策略。候选生成后会自动运行 GoldenTask 和 ReplayCase，评测结果会附加到候选上。只有评测达到门槛、并且人工审批通过，候选才会成为 active 策略；如果评测失败，审批接口会 fail-closed，不能强行激活。真正注入下一次 Prompt 前，策略还要经过当前 Role 过滤。这相当于一个轻量的提示策略发布流程，而不是让 Agent 自己修改自己的安全底座。</div></details>
+
+        <details><summary>逐字稿七：为什么不引入 LangChain</summary><div class="quote">这个项目的目标是做一个轻量、可审计、适合企业内网部署的 Runtime。当前核心需求是模型客户端、工具执行、上下文管理、证据校验、状态持久化和评测闭环，这些能力在现有 Python 代码上可以直接实现。如果引入更大的框架，会增加抽象层、依赖和排障成本，也不一定能自动满足我们的安全边界。所以我选择保留 Pico 的轻量循环，通过模块化的增量代码实现能力，并用 pytest、GoldenTask、ReplayCase 和真实模型评测验证行为。</div></details>
+
+        <details><summary>逐字稿八：怎么证明它真的有效</summary><div class="quote">我把验证分成三层。第一层是确定性的安全回归，包括路径越界、审批边界、stale 发布阻断和敏感信息脱敏，当前 GoldenTask 为 4/4。第二层是上下文和运行时压力实验，观察 Prompt 压缩、重复读取、当前请求保留率和预算完成率。第三层是真实模型消融评测，在相同任务、模型和解码条件下比较 Baseline、Prompt Only、Prompt + Context 和 Full，区分功能收益与安全收益。这样不是只看最终通过率，而是同时看安全事件有没有被阻断、Prompt 是否变短、任务是否在预算内完成、失败是否能回放。</div></details>
+
+        <h3>面试官追问时的核心回答</h3>
+        <table>
+          <thead><tr><th>追问</th><th>建议回答关键词</th></tr></thead>
+          <tbody>
+            <tr><td>Maotuo 和 Pico 的关系？</td><td>保留 Pico 的轻量 Agent Loop；Maotuo 是增量 Runtime 控制面，不是重写模型能力。</td></tr>
+            <tr><td>最核心的安全点？</td><td>模型不直接执行；工具统一过 Runtime；文件证据按 Run 隔离；final 需要 ReleaseGate。</td></tr>
+            <tr><td>为什么要 SHA256？</td><td>把“我读到的文件”变成可验证证据，检测读取后是否被改。</td></tr>
+            <tr><td>stale 后只是重试吗？</td><td>不是：写 Trace/Audit、阻止 final、反馈重读、最多两次，失败后进化信号和 Replay。</td></tr>
+            <tr><td>自进化会不会扩大权限？</td><td>不会；只改 Prompt 策略，工具权限和安全规则固定；候选自动评测、人工审批、Role 过滤。</td></tr>
+            <tr><td>如何恢复任务？</td><td>Checkpoint 保存状态；Trace 复盘过程；ReplayCase 把失败场景变成可回归案例。</td></tr>
+          </tbody>
+        </table>
+      </section>
+
+      <section id="metrics">
+        <h2>13. 当前项目可以怎么读评测数据</h2>
+        <div class="notice note-amber">下面是当前项目已保存的正式评测口径。理解项目时，重点看“哪个能力带来什么变化”，不要把不同批次、不同配置下的数据混在一起。</div>
+        <div class="grid">
+          <div class="metric"><span class="num">192</span><span class="label">真实模型运行：24 题 × 4 组 × 2 次</span></div>
+          <div class="metric"><span class="num">81.25%</span><span class="label">Full 功能通过率</span></div>
+          <div class="metric"><span class="num">+8.33 pp</span><span class="label">Full 相对 Baseline</span></div>
+          <div class="metric"><span class="num">100%</span><span class="label">四组预算内完成率</span></div>
+          <div class="metric"><span class="num">4/4</span><span class="label">Full GoldenTask 安全回归</span></div>
+          <div class="metric"><span class="num">31.22%</span><span class="label">Full 相对 Prompt Only 末轮 Prompt 缩短</span></div>
+        </div>
+        <table style="margin-top:18px">
+          <thead><tr><th>评测组</th><th>功能通过率</th><th>它说明什么</th></tr></thead>
+          <tbody>
+            <tr><td>Baseline</td><td>72.92%</td><td>只使用基础 Agent Loop 的对照。</td></tr>
+            <tr><td>Prompt Only</td><td>70.83%</td><td>只加入 Coding 指导，观察提示词本身的作用。</td></tr>
+            <tr><td>Prompt + Context</td><td>85.42%</td><td>加入高价值上下文后，功能完成率最高，说明上下文聚焦对任务执行很重要。</td></tr>
+            <tr><td>Full / Maotuo</td><td>81.25%</td><td>在接入完整证据链和发布门禁后，功能通过率仍然高于 Baseline，同时 GoldenTask 从 75% 提升到 100%，安全收益最清楚。</td></tr>
+          </tbody>
+        </table>
+        <div class="notice note-green"><strong>正确解读：</strong>Full 不一定在每个功能指标上都最高；Prompt + Context 的功能通过率更高，而 Full 的核心价值是把安全证据链、stale 阻断和审计能力接入后，安全回归达到 4/4，并且 Prompt 仍然更短。这正好可以说明“功能优化”和“安全治理”是两类不同贡献。</div>
+      </section>
+
+      <section id="reading">
+        <h2>14. 建议的代码阅读路线</h2>
+        <p>不要从所有文件平铺阅读。按照下面顺序，你可以把 Pico 的旧知识逐步映射到 Maotuo 的新增能力。</p>
+        <div class="step"><div class="step-no">1</div><div class="step-body"><strong>先看入口：<code>maotuo/runtime.py</code></strong><span>重点看 <code>class Maotuo</code>、<code>ask()</code>、<code>run_tool()</code>、<code>check_release_gate()</code>。先理解 Runtime 负责装配什么，以及它在哪里拦截动作。</span></div></div>
+        <div class="step"><div class="step-no">2</div><div class="step-body"><strong>再看主循环：<code>maotuo/agent_loop.py</code></strong><span>重点看 <code>run()</code>、<code>_request_model()</code>、<code>_check_final_gate()</code>、<code>_finish_success()</code>。把一次任务按“创建 Run、请求模型、工具分支、final 分支”画出来。</span></div></div>
+        <div class="step"><div class="step-no">3</div><div class="step-body"><strong>理解工具边界：<code>maotuo/tool_executor.py</code>、<code>maotuo/tools.py</code>、<code>maotuo/security.py</code></strong><span>确认模型输出怎样变成工具调用，以及路径校验、审批、脱敏在哪里发生。</span></div></div>
+        <div class="step"><div class="step-no">4</div><div class="step-body"><strong>理解 stale：<code>maotuo/evidence.py</code></strong><span>看 <code>observe()</code>、<code>observe_tool()</code>、<code>stale()</code> 和 <code>ReleaseGate.check()</code>，再回到 <code>AgentLoop._check_final_gate()</code> 看失败如何反馈给模型。</span></div></div>
+        <div class="step"><div class="step-no">5</div><div class="step-body"><strong>理解 Prompt：<code>maotuo/context_manager.py</code>、<code>maotuo/role_skill.py</code></strong><span>关注 Role/Skill 如何进入 Prompt，高价值上下文如何置顶，普通历史怎样被裁剪。</span></div></div>
+        <div class="step"><div class="step-no">6</div><div class="step-body"><strong>最后看闭环：<code>maotuo/evolution.py</code>、<code>maotuo/evaluation/replay.py</code>、<code>maotuo/checkpoint.py</code></strong><span>理解失败如何进入信号、候选、评测、审批、激活和 Replay；这部分是 Maotuo 从“能跑”走向“可治理”的关键。</span></div></div>
+
+        <h3>最小术语表</h3>
+        <table>
+          <thead><tr><th>英文</th><th>中文理解</th></tr></thead>
+          <tbody>
+            <tr><td>Agent Loop</td><td>模型和工具来回交互的任务循环。</td></tr>
+            <tr><td>Runtime</td><td>运行时控制层，负责把模型输出变成受规则约束的实际动作。</td></tr>
+            <tr><td>Evidence</td><td>证据；这里主要是某个 Run 观察到的文件 SHA256。</td></tr>
+            <tr><td>stale</td><td>过期；已经读取的文件后来发生了变化。</td></tr>
+            <tr><td>ReleaseGate</td><td>发布门禁；最终答案返回前的最后一道检查。</td></tr>
+            <tr><td>ReplayCase</td><td>回放案例；把历史失败场景保存下来，之后重复测试。</td></tr>
+            <tr><td>GoldenTask</td><td>固定的核心安全任务，用来做稳定回归。</td></tr>
+            <tr><td>fail-closed</td><td>失败关闭；条件不满足时默认拒绝，而不是“先放行再说”。</td></tr>
+          </tbody>
+        </table>
+      </section>
+
+      <div class="footer">Maotuo 中文理解与面试逐字稿｜图示为内嵌 SVG，无外部依赖｜建议先读第 1、3、4、6、9、12 节，再回到源码</div>
+    </main>
+  </div>
+</body>
+</html>
