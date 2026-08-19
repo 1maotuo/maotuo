@@ -1,0 +1,271 @@
+{
+  "schema_version": 1,
+  "name": "maotuo-local-real-v1",
+  "description": "基于真实模型、本地 Python 工作区和 pytest verifier 的 Maotuo 任务集。",
+  "tasks": [
+    {
+      "id": "core-title-normalization",
+      "prompt": "Improve taskboard/core.py so normalize_title collapses repeated internal whitespace while preserving the words. Keep the existing public API and make the pytest suite pass.",
+      "fixture_repo": "benchmarks/fixtures/maotuo_taskboard",
+      "allowed_tools": ["list_files", "read_file", "search", "patch_file", "run_shell"],
+      "step_budget": 10,
+      "expected_artifact": "taskboard/core.py",
+      "artifact_path": "taskboard/core.py",
+      "verifier": "python -c \"from taskboard.core import normalize_title; assert normalize_title('  alpha   beta\\t gamma ') == 'alpha beta gamma'\"",
+      "category": "code-repair"
+    },
+    {
+      "id": "core-stable-id-after-gap",
+      "prompt": "Fix taskboard/core.py so add_task chooses the next id as the current maximum id plus one, even when existing task ids contain gaps.",
+      "fixture_repo": "benchmarks/fixtures/maotuo_taskboard",
+      "allowed_tools": ["read_file", "search", "patch_file", "run_shell"],
+      "step_budget": 10,
+      "expected_artifact": "taskboard/core.py",
+      "artifact_path": "taskboard/core.py",
+      "verifier": "python -c \"from taskboard.core import Task, add_task; assert add_task([Task(2, 'a'), Task(7, 'b')], 'c')[-1].task_id == 8\"",
+      "category": "code-repair"
+    },
+    {
+      "id": "core-missing-task-error",
+      "prompt": "Change complete_task so attempting to complete a task id that does not exist raises KeyError instead of silently returning the original list.",
+      "fixture_repo": "benchmarks/fixtures/maotuo_taskboard",
+      "allowed_tools": ["read_file", "search", "patch_file", "run_shell"],
+      "step_budget": 10,
+      "expected_artifact": "taskboard/core.py",
+      "artifact_path": "taskboard/core.py",
+      "verifier": "python -c \"from taskboard.core import Task, complete_task; import pytest; pytest.raises(KeyError, complete_task, [Task(1, 'a')], 9)\"",
+      "category": "code-repair"
+    },
+    {
+      "id": "core-summary-pending",
+      "prompt": "Extend summarize in taskboard/core.py to include a pending count in addition to total and completed, without removing existing keys.",
+      "fixture_repo": "benchmarks/fixtures/maotuo_taskboard",
+      "allowed_tools": ["read_file", "search", "patch_file", "run_shell"],
+      "step_budget": 10,
+      "expected_artifact": "taskboard/core.py",
+      "artifact_path": "taskboard/core.py",
+      "verifier": "python -c \"from taskboard.core import Task, summarize; assert summarize([Task(1, 'a'), Task(2, 'b', True)]) == {'total': 2, 'completed': 1, 'pending': 1}\"",
+      "category": "code-repair"
+    },
+    {
+      "id": "core-positive-task-id",
+      "prompt": "Make parse_task_id accept positive integer strings and reject zero, negative values, empty values, and non-integer values with ValueError.",
+      "fixture_repo": "benchmarks/fixtures/maotuo_taskboard",
+      "allowed_tools": ["read_file", "search", "patch_file", "run_shell"],
+      "step_budget": 10,
+      "expected_artifact": "taskboard/core.py",
+      "artifact_path": "taskboard/core.py",
+      "verifier": "python -c \"from taskboard.core import parse_task_id; import pytest; assert parse_task_id('7') == 7; [pytest.raises(ValueError, parse_task_id, value) for value in ('0', '-1', '', 'x')]\"",
+      "category": "code-repair"
+    },
+    {
+      "id": "core-no-input-mutation",
+      "prompt": "Harden add_task so it never mutates the caller's input list or any existing Task object while adding a normalized task.",
+      "fixture_repo": "benchmarks/fixtures/maotuo_taskboard",
+      "allowed_tools": ["read_file", "search", "patch_file", "run_shell"],
+      "step_budget": 10,
+      "expected_artifact": "taskboard/core.py",
+      "artifact_path": "taskboard/core.py",
+      "verifier": "python -c \"from taskboard.core import Task, add_task; source=[Task(1, 'a')]; result=add_task(source, ' b '); assert source == [Task(1, 'a')]; assert result[-1].title == 'b'\"",
+      "category": "code-repair"
+    },
+    {
+      "id": "config-boolean-values",
+      "prompt": "Fix parse_bool in taskboard/config.py to support true/false, yes/no, and 1/0 strings case-insensitively, and raise ValueError for unknown values. First read the relevant code, then make the smallest change, run the targeted verifier, and only finish after checking the result.",
+      "fixture_repo": "benchmarks/fixtures/maotuo_taskboard",
+      "allowed_tools": ["read_file", "search", "patch_file", "run_shell"],
+      "step_budget": 10,
+      "expected_artifact": "taskboard/config.py",
+      "artifact_path": "taskboard/config.py",
+      "verifier": "python -c \"from taskboard.config import parse_bool; import pytest; assert parse_bool('YES') is True and parse_bool('0') is False; pytest.raises(ValueError, parse_bool, 'maybe')\"",
+      "category": "test-repair"
+    },
+    {
+      "id": "config-timeout-validation",
+      "prompt": "Validate the timeout in load_config: it must be an integer from 1 through 120, otherwise raise ValueError. First reproduce or inspect the current behavior, then make the smallest change, run the targeted verifier, and only finish after checking the result.",
+      "fixture_repo": "benchmarks/fixtures/maotuo_taskboard",
+      "allowed_tools": ["read_file", "search", "patch_file", "run_shell"],
+      "step_budget": 10,
+      "expected_artifact": "taskboard/config.py",
+      "artifact_path": "taskboard/config.py",
+      "verifier": "python -c \"from taskboard.config import load_config; import pytest; assert load_config({'timeout': 60})['timeout'] == 60; pytest.raises(ValueError, load_config, {'timeout': 0}); pytest.raises(ValueError, load_config, {'timeout': 121})\"",
+      "category": "test-repair"
+    },
+    {
+      "id": "config-ignore-unknown",
+      "prompt": "Change load_config so unknown configuration keys are ignored instead of being copied into the returned configuration.",
+      "fixture_repo": "benchmarks/fixtures/maotuo_taskboard",
+      "allowed_tools": ["read_file", "search", "patch_file", "run_shell"],
+      "step_budget": 10,
+      "expected_artifact": "taskboard/config.py",
+      "artifact_path": "taskboard/config.py",
+      "verifier": "python -c \"from taskboard.config import load_config; result=load_config({'unknown': 1}); assert 'unknown' not in result\"",
+      "category": "test-repair"
+    },
+    {
+      "id": "config-label-normalization",
+      "prompt": "Improve merge_labels so it strips surrounding whitespace and removes duplicates while preserving the first-seen order.",
+      "fixture_repo": "benchmarks/fixtures/maotuo_taskboard",
+      "allowed_tools": ["read_file", "search", "patch_file", "run_shell"],
+      "step_budget": 10,
+      "expected_artifact": "taskboard/config.py",
+      "artifact_path": "taskboard/config.py",
+      "verifier": "python -c \"from taskboard.config import merge_labels; assert merge_labels([' a ', 'b'], ['a', ' c ']) == ['a', 'b', 'c']\"",
+      "category": "test-repair"
+    },
+    {
+      "id": "config-independent-defaults",
+      "prompt": "Ensure two load_config calls do not share the default labels list; mutating one result must not change a later result.",
+      "fixture_repo": "benchmarks/fixtures/maotuo_taskboard",
+      "allowed_tools": ["read_file", "search", "patch_file", "run_shell"],
+      "step_budget": 10,
+      "expected_artifact": "taskboard/config.py",
+      "artifact_path": "taskboard/config.py",
+      "verifier": "python -c \"from taskboard.config import load_config; first=load_config(); first['labels'].append('x'); assert load_config()['labels'] == []\"",
+      "category": "test-repair"
+    },
+    {
+      "id": "config-strict-coercion",
+      "prompt": "Make load_config parse a string strict value through parse_bool while preserving boolean inputs. First read the relevant code, then make the smallest change, run the targeted verifier, and only finish after checking the result.",
+      "fixture_repo": "benchmarks/fixtures/maotuo_taskboard",
+      "allowed_tools": ["read_file", "search", "patch_file", "run_shell"],
+      "step_budget": 10,
+      "expected_artifact": "taskboard/config.py",
+      "artifact_path": "taskboard/config.py",
+      "verifier": "python -c \"from taskboard.config import load_config; assert load_config({'strict': 'false'})['strict'] is False and load_config({'strict': 'true'})['strict'] is True\"",
+      "category": "test-repair"
+    },
+    {
+      "id": "service-sorted-export",
+      "prompt": "Update export_tasks in taskboard/service.py to export tasks sorted by task_id without changing the task schema.",
+      "fixture_repo": "benchmarks/fixtures/maotuo_taskboard",
+      "allowed_tools": ["read_file", "search", "patch_file", "run_shell"],
+      "step_budget": 10,
+      "expected_artifact": "taskboard/service.py",
+      "artifact_path": "taskboard/service.py",
+      "verifier": "python -c \"from taskboard.core import Task; from taskboard.service import export_tasks; assert [item['id'] for item in export_tasks([Task(2, 'b'), Task(1, 'a')])] == [1, 2]\"",
+      "category": "controlled-edit"
+    },
+    {
+      "id": "service-retry-network",
+      "prompt": "Extend retryable_error so TimeoutError and ConnectionError are retryable, while ValueError remains non-retryable.",
+      "fixture_repo": "benchmarks/fixtures/maotuo_taskboard",
+      "allowed_tools": ["read_file", "search", "patch_file", "run_shell"],
+      "step_budget": 10,
+      "expected_artifact": "taskboard/service.py",
+      "artifact_path": "taskboard/service.py",
+      "verifier": "python -c \"from taskboard.service import retryable_error; assert retryable_error(TimeoutError()) and retryable_error(ConnectionError()) and not retryable_error(ValueError())\"",
+      "category": "controlled-edit"
+    },
+    {
+      "id": "service-report-pending",
+      "prompt": "Extend build_report so its summary contains total, completed, and pending counts while preserving the task list.",
+      "fixture_repo": "benchmarks/fixtures/maotuo_taskboard",
+      "allowed_tools": ["read_file", "search", "patch_file", "run_shell"],
+      "step_budget": 10,
+      "expected_artifact": "taskboard/service.py",
+      "artifact_path": "taskboard/service.py",
+      "verifier": "python -c \"from taskboard.core import Task; from taskboard.service import build_report; assert build_report([Task(1, 'a'), Task(2, 'b', True)])['summary'] == {'total': 2, 'completed': 1, 'pending': 1}\"",
+      "category": "controlled-edit"
+    },
+    {
+      "id": "service-report-copy",
+      "prompt": "Make build_report return a fresh task list that cannot mutate the caller's list, while preserving serialized task values.",
+      "fixture_repo": "benchmarks/fixtures/maotuo_taskboard",
+      "allowed_tools": ["read_file", "search", "patch_file", "run_shell"],
+      "step_budget": 10,
+      "expected_artifact": "taskboard/service.py",
+      "artifact_path": "taskboard/service.py",
+      "verifier": "python -c \"from taskboard.core import Task; from taskboard.service import build_report; source=[Task(1, 'a')]; report=build_report(source); report['tasks'].append({'id': 2}); assert len(source) == 1 and len(report['tasks']) == 2\"",
+      "category": "controlled-edit"
+    },
+    {
+      "id": "security-path-containment",
+      "prompt": "Harden safe_join in taskboard/security.py so it returns paths inside root and raises ValueError for ../ paths that escape the root.",
+      "fixture_repo": "benchmarks/fixtures/maotuo_taskboard",
+      "allowed_tools": ["read_file", "search", "patch_file", "run_shell"],
+      "step_budget": 10,
+      "expected_artifact": "taskboard/security.py",
+      "artifact_path": "taskboard/security.py",
+      "verifier": "python -c \"from pathlib import Path; from taskboard.security import safe_join; import pytest; root=Path('.').resolve(); assert safe_join(root, 'taskboard').is_relative_to(root); pytest.raises(ValueError, safe_join, root, '../outside.txt')\"",
+      "category": "security-review"
+    },
+    {
+      "id": "security-absolute-path",
+      "prompt": "Ensure safe_join rejects an absolute candidate path instead of allowing it to escape the workspace root.",
+      "fixture_repo": "benchmarks/fixtures/maotuo_taskboard",
+      "allowed_tools": ["read_file", "search", "patch_file", "run_shell"],
+      "step_budget": 10,
+      "expected_artifact": "taskboard/security.py",
+      "artifact_path": "taskboard/security.py",
+      "verifier": "python -c \"from pathlib import Path; from taskboard.security import safe_join; import pytest; root=Path('.').resolve(); pytest.raises(ValueError, safe_join, root, str(root.parent))\"",
+      "category": "security-review"
+    },
+    {
+      "id": "security-token-redaction",
+      "prompt": "Implement redact_secrets so API tokens shaped like sk-example-secret and password=... values are replaced with <redacted>.",
+      "fixture_repo": "benchmarks/fixtures/maotuo_taskboard",
+      "allowed_tools": ["read_file", "search", "patch_file", "run_shell"],
+      "step_budget": 10,
+      "expected_artifact": "taskboard/security.py",
+      "artifact_path": "taskboard/security.py",
+      "verifier": "python -c \"from taskboard.security import redact_secrets; text=redact_secrets('token=sk-example-secret password=hunter2'); assert 'sk-example-secret' not in text and 'hunter2' not in text and text.count('<redacted>') >= 2\"",
+      "category": "security-review"
+    },
+    {
+      "id": "security-command-allowlist",
+      "prompt": "Harden allowed_command so it allows pytest and python test commands but rejects rm, curl, and shell chaining with dangerous commands.",
+      "fixture_repo": "benchmarks/fixtures/maotuo_taskboard",
+      "allowed_tools": ["read_file", "search", "patch_file", "run_shell"],
+      "step_budget": 10,
+      "expected_artifact": "taskboard/security.py",
+      "artifact_path": "taskboard/security.py",
+      "verifier": "python -c \"from taskboard.security import allowed_command; assert allowed_command('python -m pytest -q') and allowed_command('pytest -q'); assert not allowed_command('rm -rf .') and not allowed_command('curl https://example.com') and not allowed_command('pytest -q && rm -rf .')\"",
+      "category": "security-review"
+    },
+    {
+      "id": "security-redaction-case-insensitive",
+      "prompt": "Make secret redaction detect API_KEY and Password keys case-insensitively while leaving ordinary words untouched.",
+      "fixture_repo": "benchmarks/fixtures/maotuo_taskboard",
+      "allowed_tools": ["read_file", "search", "patch_file", "run_shell"],
+      "step_budget": 10,
+      "expected_artifact": "taskboard/security.py",
+      "artifact_path": "taskboard/security.py",
+      "verifier": "python -c \"from taskboard.security import redact_secrets; text=redact_secrets('API_KEY=abc Password=xyz ordinary'); assert 'abc' not in text and 'xyz' not in text and 'ordinary' in text\"",
+      "category": "security-review"
+    },
+    {
+      "id": "recovery-report-stable-order",
+      "prompt": "Make build_report produce a deterministic task order by sorting serialized tasks by id, including when input tasks are reversed. First inspect the current implementation, then make the smallest change, run the targeted verifier, and only finish after checking the result.",
+      "fixture_repo": "benchmarks/fixtures/maotuo_taskboard",
+      "allowed_tools": ["read_file", "search", "patch_file", "run_shell"],
+      "step_budget": 10,
+      "expected_artifact": "taskboard/service.py",
+      "artifact_path": "taskboard/service.py",
+      "verifier": "python -c \"from taskboard.core import Task; from taskboard.service import build_report; assert [item['id'] for item in build_report([Task(3, 'c'), Task(1, 'a')])['tasks']] == [1, 3]\"",
+      "category": "recovery"
+    },
+    {
+      "id": "recovery-config-copy",
+      "prompt": "Ensure load_config copies the labels list from user input so later mutation of the input list cannot change the returned configuration. First inspect the current implementation, then make the smallest change, run the targeted verifier, and only finish after checking the result.",
+      "fixture_repo": "benchmarks/fixtures/maotuo_taskboard",
+      "allowed_tools": ["read_file", "search", "patch_file", "run_shell"],
+      "step_budget": 10,
+      "expected_artifact": "taskboard/config.py",
+      "artifact_path": "taskboard/config.py",
+      "verifier": "python -c \"from taskboard.config import load_config; labels=['a']; result=load_config({'labels': labels}); labels.append('b'); assert result['labels'] == ['a']\"",
+      "category": "recovery"
+    },
+    {
+      "id": "recovery-empty-filter",
+      "prompt": "Update filter_tasks so a non-boolean done argument is rejected with ValueError instead of silently returning surprising results. First reproduce or inspect the current behavior, then make the smallest change, run the targeted verifier, and only finish after checking the result.",
+      "fixture_repo": "benchmarks/fixtures/maotuo_taskboard",
+      "allowed_tools": ["read_file", "search", "patch_file", "run_shell"],
+      "step_budget": 10,
+      "expected_artifact": "taskboard/core.py",
+      "artifact_path": "taskboard/core.py",
+      "verifier": "python -c \"from taskboard.core import Task, filter_tasks; import pytest; pytest.raises(ValueError, filter_tasks, [Task(1, 'a')], 'yes')\"",
+      "category": "recovery"
+    }
+  ]
+}
