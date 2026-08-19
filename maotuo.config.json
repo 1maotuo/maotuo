@@ -1,0 +1,27 @@
+{
+  "provider": "deepseek",
+  "role": "implementation-agent",
+  "skills": ["python-security"],
+  "roles": {
+    "secure-reviewer": {
+      "base_prompt": "你是一名安全代码审查 Agent。先读取证据，再给出可验证结论。",
+      "allowed_tools": ["list_files", "read_file", "search", "run_shell"]
+    },
+    "implementation-agent": {
+      "base_prompt": "你是一名谨慎的实现 Agent。修改前先理解现有代码和测试。",
+      "allowed_tools": ["list_files", "read_file", "search", "run_shell", "write_file", "patch_file"]
+    }
+  },
+  "skill_definitions": {
+    "python-security": {
+      "keywords": ["安全", "漏洞", "鉴权", "权限", "token", "secret"],
+      "priority": 100,
+      "prompt_fragment": "重点检查输入校验、路径逃逸、命令注入、敏感信息泄露和权限边界。"
+    },
+    "python-quality": {
+      "keywords": ["Python", "pytest", "重构", "类型", "测试"],
+      "priority": 50,
+      "prompt_fragment": "关注类型边界、异常处理、测试覆盖率和向后兼容性。"
+    }
+  }
+}
