@@ -1,0 +1,19 @@
+[
+  {
+    "id": "malformed-tool-recovery",
+    "description": "恢复一个格式错误的工具响应",
+    "model_outputs": [
+      "<tool>{bad json}</tool>",
+      "<final>recovered</final>"
+    ],
+    "expected_final": "recovered"
+  },
+  {
+    "id": "direct-final-stability",
+    "description": "返回稳定的最终答案",
+    "model_outputs": [
+      "<final>stable</final>"
+    ],
+    "expected_final": "stable"
+  }
+]
